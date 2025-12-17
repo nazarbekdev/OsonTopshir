@@ -1,0 +1,39 @@
+name: Django CI
+
+on:
+  push:
+    branches: [ "master", "main" ]
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Create .env file
+        run: |
+          echo "DJANGO_SECRET_KEY=ci-secret-key" >> .env
+          echo "DJANGO_DEBUG=False" >> .env
+          echo "DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1" >> .env
+
+      - name: Run migrations
+        run: |
+          python manage.py migrate
+
+      - name: Django system check
+        run: |
+          python manage.py check
