@@ -1,0 +1,123 @@
+{% load static %}
+
+<header
+  x-data="{
+    scrolled: false,
+    open: false,
+    active: ''
+  }"
+  x-init="
+    window.addEventListener('scroll', () => {
+      scrolled = window.scrollY > 10;
+
+      const sections = ['services','how-it-works','documents','contact'];
+      for (const id of sections) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= 120) {
+          active = id;
+        }
+      }
+    })
+  "
+  :class="scrolled ? 'bg-white/80 backdrop-blur-xl shadow-sm' : 'bg-transparent'"
+  class="fixed top-0 left-0 w-full z-50 transition-all duration-300">
+
+  <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+
+    <!-- Logo -->
+    <a href="/" class="flex items-center gap-3">
+      <img src="{% static 'images/logo.svg' %}"
+           alt="OsonTopshir"
+           class="h-10 sm:h-11 md:h-12 w-auto">
+
+      <span class="text-xl sm:text-2xl font-bold text-blue-700">
+        OsonTopshir
+      </span>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
+      <a href="#services"
+         :class="active === 'services' ? 'text-blue-600' : ''"
+         class="hover:text-blue-600 transition">
+        Xizmatlar
+      </a>
+      <a href="#how-it-works"
+         :class="active === 'how-it-works' ? 'text-blue-600' : ''"
+         class="hover:text-blue-600 transition">
+        Qanday ishlaydi
+      </a>
+      <a href="#documents"
+         :class="active === 'documents' ? 'text-blue-600' : ''"
+         class="hover:text-blue-600 transition">
+        Hujjatlar
+      </a>
+      <a href="#contact"
+         :class="active === 'contact' ? 'text-blue-600' : ''"
+         class="hover:text-blue-600 transition">
+        Aloqa
+      </a>
+    </nav>
+
+    <!-- Auth (Desktop) -->
+    <div class="hidden md:flex items-center gap-3">
+      {% if user.is_authenticated %}
+        <a href="/dashboard"
+           class="text-sm font-medium text-gray-700 hover:text-blue-600">
+          Dashboard
+        </a>
+        <a href="/logout"
+           class="px-4 py-2 text-sm font-medium bg-gray-100 rounded-lg hover:bg-gray-200">
+          Chiqish
+        </a>
+      {% else %}
+        <a href="/login"
+           class="text-sm font-medium text-gray-700 hover:text-blue-600">
+          Kirish
+        </a>
+        <a href="/register"
+           class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+          Ro‘yxatdan o‘tish
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- Mobile Button -->
+    <button @click="open = !open"
+            class="md:hidden text-gray-700 focus:outline-none">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+           viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
+
+  </div>
+
+  <!-- Mobile Menu -->
+  <div x-show="open"
+       x-transition
+       @click.outside="open = false"
+       class="md:hidden bg-white border-t shadow-lg">
+
+    <nav class="flex flex-col px-6 py-4 gap-4 text-sm font-medium">
+      <a href="#services" @click="open=false">Xizmatlar</a>
+      <a href="#how-it-works" @click="open=false">Qanday ishlaydi</a>
+      <a href="#documents" @click="open=false">Hujjatlar</a>
+      <a href="#contact" @click="open=false">Aloqa</a>
+
+      <hr>
+
+      {% if user.is_authenticated %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout" class="text-red-600">Chiqish</a>
+      {% else %}
+        <a href="/login">Kirish</a>
+        <a href="/register" class="text-blue-600 font-semibold">
+          Ro‘yxatdan o‘tish
+        </a>
+      {% endif %}
+    </nav>
+  </div>
+
+</header>
